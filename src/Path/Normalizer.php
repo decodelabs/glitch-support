@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace DecodeLabs\Glitch\Path;
 
 /**
- * This class represents a static, global repository of path aliases
+ * This class represents a static, global handle on Glitch
  */
 final class Normalizer
 {
@@ -20,55 +20,6 @@ final class Normalizer
     {
     }
 
-    /**
-     * Register path replacement alias
-     */
-    public static function registerAlias(string $name, string $path): void
-    {
-        $path = rtrim($path, '/').'/';
-        self::$aliases[$name] = $path;
-
-        try {
-            if (($realPath = realpath($path)) && $realPath.'/' !== $path) {
-                self::$aliases[$name.'*'] = $realPath.'/';
-            }
-        } catch (\Throwable $e) {
-        }
-
-        uasort(self::$aliases, function ($a, $b) {
-            return strlen($b) - strlen($a);
-        });
-    }
-
-    /**
-     * Register list of path replacement aliases
-     */
-    public static function registerAliases(array $aliases): void
-    {
-        foreach ($aliases as $name => $path) {
-            $path = rtrim($path, '/').'/';
-            self::$aliases[$name] = $path;
-
-            try {
-                if (($realPath = realpath($path)) && $realPath.'/' !== $path) {
-                    self::$aliases[$name.'*'] = $realPath.'/';
-                }
-            } catch (\Throwable $e) {
-            }
-        }
-
-        uasort(self::$aliases, function ($a, $b) {
-            return strlen($b) - strlen($a);
-        });
-    }
-
-    /**
-     * Inspect list of registered path aliases
-     */
-    public static function getAliases(): array
-    {
-        return self::$aliases;
-    }
 
     /**
      * Lookup and replace path prefix
@@ -79,19 +30,10 @@ final class Normalizer
             return null;
         }
 
-        $path = str_replace('\\', '/', $path);
-        $testPath = rtrim($path, '/').'/';
-
-        foreach (self::$aliases as $name => $test) {
-            $len = strlen($test);
-
-            if ($testPath === $test) {
-                return rtrim($name, '*').'://'.ltrim($path, '/');
-            } elseif (substr($testPath, 0, $len) == $test) {
-                return rtrim($name, '*').'://'.ltrim(substr($path, $len), '/');
-            }
+        if (!class_exists('DecodeLabs\\Glitch')) {
+            return $path;
         }
 
-        return $path;
+        return \DecodeLabs\Glitch::normalizePath($path);
     }
 }
