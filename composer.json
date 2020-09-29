@@ -18,11 +18,11 @@
         "phpstan/extension-installer": "^1.0",
         "decodelabs/phpstan-decodelabs": "^0.3",
 
-        "decodelabs/glitch": "^0.15.6"
+        "decodelabs/exceptional": "^0.1"
     },
     "autoload": {
         "psr-4": {
-            "DecodeLabs\\Glitch": "src/"
+            "DecodeLabs\\Glitch\\": "src/"
         }
     },
     "extra": {
