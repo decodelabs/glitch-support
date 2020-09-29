@@ -107,6 +107,13 @@ class Frame
                 $this->args = $this->args[0];
             }
         }
+
+        if (
+            $this->function === '__callStatic' ||
+            $this->function === '__call'
+        ) {
+            $this->function = array_shift($this->args);
+        }
     }
 
 
