@@ -1,3 +1,7 @@
+## v0.1.3 (2020-09-29)
+* Added Exceptional support to Frame
+* Updated __call() support in Frame
+
 ## v0.1.2 (2020-09-29)
 * Moved path normalisation back to Glitch main
 

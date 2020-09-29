@@ -107,6 +107,13 @@ class Frame
                 $this->args = $this->args[0];
             }
         }
+
+        if (
+            $this->function === '__callStatic' ||
+            $this->function === '__call'
+        ) {
+            $this->function = array_shift($this->args);
+        }
     }
 
 
@@ -250,6 +257,8 @@ class Frame
         if ($alias) {
             if (false !== strpos($class, 'Glitch/Exception/Factory.php')) {
                 return 'EGlitch';
+            } elseif (false !== strpos($class, 'Exceptional/Factory.php')) {
+                return 'Exceptional';
             } elseif (false !== strpos($class, 'veneer/src/Veneer/Binding.php')) {
                 if (defined($class.'::FACADE')) {
                     return '~'.$class::FACADE;
