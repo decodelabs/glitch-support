@@ -1,5 +1,5 @@
-# Exceptional
+# Glitch Support
 
-### Better Exceptions for PHP
+This repository contains shared support classes and interfaces for libraries wishing to support Glitch functionality.
 
-Exceptional aims to offer a radically enhanced Exception framework that decouples the _meaning_ of an Exception from the underlying _implementation_ functionality.
+Please see [DecodeLabs Glitch](https://github.com/decodelabs/glitch) for more.
