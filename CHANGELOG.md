@@ -1,3 +1,6 @@
+## v0.1.2 (2020-09-29)
+* Moved path normalisation back to Glitch main
+
 ## v0.1.1 (2020-09-29)
 * Reverted to PHPUnit 8
 
