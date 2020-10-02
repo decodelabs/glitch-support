@@ -1,3 +1,7 @@
+## v0.2.0 (2020-10-02)
+* Added basic Glitch proxy
+* Removed PathNormalizer
+
 ## v0.1.4 (2020-10-02)
 * Removed EGlitch frame class normalizer
 
