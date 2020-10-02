@@ -1,3 +1,6 @@
+## v0.1.4 (2020-10-02)
+* Removed EGlitch frame class normalizer
+
 ## v0.1.3 (2020-09-29)
 * Added Exceptional support to Frame
 * Updated __call() support in Frame
