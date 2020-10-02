@@ -6,7 +6,7 @@
 declare(strict_types=1);
 namespace DecodeLabs\Glitch\Stack;
 
-use DecodeLabs\Glitch\Path\Normalizer as Path;
+use DecodeLabs\Glitch\Proxy;
 
 use JsonSerializable;
 use OutOfBoundsException;
@@ -270,9 +270,9 @@ class Frame
             $part = trim(array_shift($parts));
 
             if (preg_match('/^class@anonymous(.+)(\(([0-9]+)\))/', $part, $matches)) {
-                $name[] = Path::normalize(trim($matches[1])).' : '.($matches[3] ?? null);
+                $name[] = Proxy::normalizePath(trim($matches[1])).' : '.($matches[3] ?? null);
             } elseif (preg_match('/^class@anonymous(.+)(0x[0-9a-f]+)/', $part, $matches)) {
-                $partName = Path::normalize(trim($matches[1]));
+                $partName = Proxy::normalizePath(trim($matches[1]));
 
                 if ($partName === trim($matches[1])) {
                     $partName = basename($partName);
@@ -462,7 +462,7 @@ class Frame
      */
     public function __toString(): string
     {
-        return $this->getSignature()."\n  ".Path::normalize($this->getCallingFile()).' : '.$this->getCallingLine();
+        return $this->getSignature()."\n  ".Proxy::normalizePath($this->getCallingFile()).' : '.$this->getCallingLine();
     }
 
 
@@ -472,7 +472,7 @@ class Frame
     public function toArray(): array
     {
         return [
-            'file' => Path::normalize($this->getFile()),
+            'file' => Proxy::normalizePath($this->getFile()),
             'line' => $this->getLine(),
             'function' => $this->function,
             'class' => $this->className,
@@ -488,7 +488,7 @@ class Frame
     public function jsonSerialize()
     {
         return [
-            'file' => Path::normalize($this->getFile()),
+            'file' => Proxy::normalizePath($this->getFile()),
             'line' => $this->getLine(),
             'signature' => $this->getSignature()
         ];

@@ -8,7 +8,7 @@ namespace DecodeLabs\Glitch\Stack;
 
 use DecodeLabs\Glitch\Dumpable;
 use DecodeLabs\Glitch\Stack\Frame;
-use DecodeLabs\Glitch\Path\Normalizer as Path;
+use DecodeLabs\Glitch\Proxy;
 
 use DecodeLabs\Exceptional\Exception;
 
@@ -238,7 +238,7 @@ class Trace implements
         foreach ($this->frames as $frame) {
             $frameString = $frame->getSignature()."\n".
                 str_repeat(' ', $pad + 1).
-                Path::normalize($frame->getCallingFile()).' : '.$frame->getCallingLine();
+                Proxy::normalizePath($frame->getCallingFile()).' : '.$frame->getCallingLine();
 
             $output .= str_pad((string)$count--, $pad, ' ', \STR_PAD_LEFT).': '.$frameString."\n";
         }
@@ -294,7 +294,7 @@ class Trace implements
 
         foreach ($frames as $i => $frame) {
             $output[($count - $i).': '.$frame->getSignature(true)] = [
-                'file' => Path::normalize($frame->getCallingFile()).' : '.$frame->getCallingLine()
+                'file' => Proxy::normalizePath($frame->getCallingFile()).' : '.$frame->getCallingLine()
             ];
         }
 
@@ -303,7 +303,7 @@ class Trace implements
 
 
     /**
-     * Dump for Glitch
+     * Export for dump inspection
      */
     public function glitchDump(): iterable
     {
