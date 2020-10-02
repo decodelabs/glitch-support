@@ -254,14 +254,12 @@ class Frame
      */
     public static function normalizeClassName(string $class, bool $alias=true): string
     {
-        if ($alias) {
-            if (false !== strpos($class, 'Glitch/Exception/Factory.php')) {
-                return 'EGlitch';
-            } elseif (false !== strpos($class, 'veneer/src/Veneer/Binding.php')) {
-                if (defined($class.'::FACADE')) {
-                    return '~'.$class::FACADE;
-                }
-            }
+        if (
+            $alias &&
+            false !== strpos($class, 'veneer/src/Veneer/Binding.php') &&
+            defined($class.'::FACADE')
+        ) {
+            return '~'.$class::FACADE;
         }
 
         $name = [];
