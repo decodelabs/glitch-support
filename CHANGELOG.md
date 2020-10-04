@@ -1,3 +1,6 @@
+## v0.2.2 (2020-10-04)
+* Update Veneer support in Stack Frame
+
 ## v0.2.1 (2020-10-04)
 * Added incomplete() support to Proxy
 * Added remaining portable helper calls to Proxy

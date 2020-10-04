@@ -113,10 +113,6 @@ final class Proxy
      */
     public static function incomplete($data=null, int $rewind=0): void
     {
-        if (class_exists('DecodeLabs\\Exceptional')) {
-            //\DecodeLabs\Exceptional::incomplete($data, $rewind + 1);
-        }
-
         throw new IncompleteException(
             Trace::create($rewind),
             $data

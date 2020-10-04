@@ -101,7 +101,7 @@ class Frame
 
 
         // Glitch specific
-        if (null !== ($facade = $this->getVeneerFacade())) {
+        if (null !== $this->getVeneerProxy()) {
             if (isset($this->args[0])) {
                 $this->function = array_shift($this->args);
                 $this->args = $this->args[0];
@@ -176,21 +176,21 @@ class Frame
 
 
     /**
-     * Is in facade ?
+     * Is in proxy ?
      */
-    public function getVeneerFacade(): ?string
+    public function getVeneerProxy(): ?string
     {
-        $isFacade =
+        $isProxy =
             //$this->function === '__callStatic' &&
             $this->className !== null &&
             false !== strpos($this->className, 'veneer/src/Veneer/Binding.php');
 
-        if (!$isFacade) {
+        if (!$isProxy) {
             return null;
         }
 
-        if (defined($this->className.'::FACADE')) {
-            return $this->className::FACADE;
+        if (defined($this->className.'::VENEER')) {
+            return $this->className::VENEER;
         }
 
         return null;
@@ -257,9 +257,9 @@ class Frame
         if (
             $alias &&
             false !== strpos($class, 'veneer/src/Veneer/Binding.php') &&
-            defined($class.'::FACADE')
+            defined($class.'::VENEER')
         ) {
-            return '~'.$class::FACADE;
+            return '~'.$class::VENEER;
         }
 
         $name = [];
