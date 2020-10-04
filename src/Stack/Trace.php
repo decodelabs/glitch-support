@@ -63,7 +63,7 @@ class Trace implements
      */
     public static function create(int $rewind=0): self
     {
-        return self::fromArray(debug_backtrace(), $rewind + 1);
+        return self::fromArray(debug_backtrace(), $rewind);
     }
 
     /**
@@ -75,12 +75,9 @@ class Trace implements
 
         if ($rewind) {
             if ($rewind > count($trace) - 1) {
-                throw new OutOfBoundsException('Stack rewind out of stack frame range');/*, [
-                    'data' => [
-                        'rewind' => $rewind,
-                        'trace' => $trace
-                    ]
-                ]);*/
+                throw new OutOfBoundsException(
+                    'Stack rewind out of stack frame range'
+                );
             }
 
             while ($rewind >= 0) {

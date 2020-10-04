@@ -6,6 +6,11 @@
 declare(strict_types=1);
 namespace DecodeLabs\Glitch;
 
+use DecodeLabs\Glitch\IncompleteException;
+use DecodeLabs\Glitch\Stack\Frame;
+use DecodeLabs\Glitch\Stack\Trace;
+
+use Exception;
 use Throwable;
 
 /**
@@ -53,6 +58,18 @@ final class Proxy
 
 
 
+    /**
+     * Get current run mode
+     */
+    public static function getRunMode(): string
+    {
+        if (!class_exists('DecodeLabs\\Glitch')) {
+            return 'production';
+        }
+
+        return \DecodeLabs\Glitch::getRunMode();
+    }
+
 
     /**
      * Is Glitch in development mode?
@@ -88,5 +105,30 @@ final class Proxy
         }
 
         return \DecodeLabs\Glitch::isProduction();
+    }
+
+
+    /**
+     * Shortcut to incomplete context method
+     */
+    public static function incomplete($data=null, int $rewind=0): void
+    {
+        if (class_exists('DecodeLabs\\Exceptional')) {
+            //\DecodeLabs\Exceptional::incomplete($data, $rewind + 1);
+        }
+
+        throw new IncompleteException(
+            Trace::create($rewind),
+            $data
+        );
+    }
+
+
+    /**
+     * Create a new stack trace
+     */
+    public static function stackTrace(int $rewind=0): Trace
+    {
+        return Trace::create($rewind);
     }
 }
