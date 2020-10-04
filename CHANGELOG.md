@@ -1,3 +1,7 @@
+## v0.2.1 (2020-10-04)
+* Added incomplete() support to Proxy
+* Added remaining portable helper calls to Proxy
+
 ## v0.2.0 (2020-10-02)
 * Added basic Glitch proxy
 * Removed PathNormalizer
