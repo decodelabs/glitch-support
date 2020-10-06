@@ -1,13 +1,14 @@
 <?php
+
 /**
- * This file is part of the Glitch Support package
+ * @package GlitchSupport
  * @license http://opensource.org/licenses/MIT
  */
+
 declare(strict_types=1);
+
 namespace DecodeLabs\Glitch;
 
-use DecodeLabs\Glitch\IncompleteException;
-use DecodeLabs\Glitch\Stack\Frame;
 use DecodeLabs\Glitch\Stack\Trace;
 
 use Exception;
@@ -21,7 +22,7 @@ final class Proxy
     /**
      * Protected constructor inhibits instantiation
      */
-    protected function __construct()
+    private function __construct()
     {
     }
 
@@ -111,7 +112,7 @@ final class Proxy
     /**
      * Shortcut to incomplete context method
      */
-    public static function incomplete($data=null, int $rewind=0): void
+    public static function incomplete($data = null, int $rewind = 0): void
     {
         throw new IncompleteException(
             Trace::create($rewind),
@@ -123,7 +124,7 @@ final class Proxy
     /**
      * Create a new stack trace
      */
-    public static function stackTrace(int $rewind=0): Trace
+    public static function stackTrace(int $rewind = 0): Trace
     {
         return Trace::create($rewind);
     }

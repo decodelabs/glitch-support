@@ -1,14 +1,15 @@
 <?php
+
 /**
- * This file is part of the Glitch Support package
+ * @package GlitchSupport
  * @license http://opensource.org/licenses/MIT
  */
+
 declare(strict_types=1);
+
 namespace DecodeLabs\Glitch\Stack;
 
 use DecodeLabs\Glitch\Proxy;
-
-use JsonSerializable;
 use OutOfBoundsException;
 
 /**
@@ -32,7 +33,7 @@ class Frame
      * Generate a new trace and pull out a single frame
      * depending on the rewind range
      */
-    public static function create(int $rewind=0): Frame
+    public static function create(int $rewind = 0): Frame
     {
         $data = debug_backtrace();
 
@@ -189,7 +190,7 @@ class Frame
             return null;
         }
 
-        if (defined($this->className.'::VENEER')) {
+        if (defined($this->className . '::VENEER')) {
             return $this->className::VENEER;
         }
 
@@ -227,7 +228,7 @@ class Frame
         }
 
         $output = $this->namespace !== null ?
-            $this->namespace.'\\' : '';
+            $this->namespace . '\\' : '';
 
         $output .= $this->className;
         return $output;
@@ -252,14 +253,14 @@ class Frame
     /**
      * Normalize a classname
      */
-    public static function normalizeClassName(string $class, bool $alias=true): string
+    public static function normalizeClassName(string $class, bool $alias = true): string
     {
         if (
             $alias &&
             false !== strpos($class, 'veneer/src/Veneer/Binding.php') &&
-            defined($class.'::VENEER')
+            defined($class . '::VENEER')
         ) {
-            return '~'.$class::VENEER;
+            return '~' . $class::VENEER;
         }
 
         $name = [];
@@ -270,7 +271,7 @@ class Frame
             $part = trim(array_shift($parts));
 
             if (preg_match('/^class@anonymous(.+)(\(([0-9]+)\))/', $part, $matches)) {
-                $name[] = Proxy::normalizePath(trim($matches[1])).' : '.($matches[3] ?? null);
+                $name[] = Proxy::normalizePath(trim($matches[1])) . ' : ' . ($matches[3] ?? null);
             } elseif (preg_match('/^class@anonymous(.+)(0x[0-9a-f]+)/', $part, $matches)) {
                 $partName = Proxy::normalizePath(trim($matches[1]));
 
@@ -278,9 +279,9 @@ class Frame
                     $partName = basename($partName);
                 }
 
-                $name[] = '@anonymous : '.$partName;
+                $name[] = '@anonymous : ' . $partName;
             } elseif (preg_match('/^eval\(\)\'d/', $part)) {
-                $name = ['eval[ '.implode(' : ', $name).' ]'];
+                $name = ['eval[ ' . implode(' : ', $name) . ' ]'];
             } else {
                 $el = explode('\\', $part);
                 $name[] = array_pop($el);
@@ -338,12 +339,12 @@ class Frame
         foreach ($this->args as $arg) {
             if (is_string($arg)) {
                 if (strlen($arg) > 16) {
-                    $arg = substr($arg, 0, 16).'...';
+                    $arg = substr($arg, 0, 16) . '...';
                 }
 
-                $arg = '\''.$arg.'\'';
+                $arg = '\'' . $arg . '\'';
             } elseif (is_array($arg)) {
-                $arg = '['.count($arg).']';
+                $arg = '[' . count($arg) . ']';
             } elseif (is_object($arg)) {
                 $arg = self::normalizeClassName(get_class($arg));
             } elseif (is_bool($arg)) {
@@ -355,19 +356,19 @@ class Frame
             $output[] = $arg;
         }
 
-        return '('.implode(', ', $output).')';
+        return '(' . implode(', ', $output) . ')';
     }
 
 
     /**
      * Generate a full frame signature
      */
-    public function getSignature(?bool $argString=false, bool $namespace=true): string
+    public function getSignature(?bool $argString = false, bool $namespace = true): string
     {
         $output = '';
 
         if ($namespace && $this->namespace !== null) {
-            $output = $this->namespace.'\\';
+            $output = $this->namespace . '\\';
         }
 
         if ($this->className !== null) {
@@ -414,10 +415,10 @@ class Frame
         if ($this->function === '{closure}') {
             return null;
         } elseif ($this->className !== null) {
-            $classRef = new \ReflectionClass($this->namespace.'\\'.$this->className);
+            $classRef = new \ReflectionClass($this->namespace . '\\' . $this->className);
             return $classRef->getMethod($this->function);
         } else {
-            return new \ReflectionFunction($this->namespace.'\\'.$this->function);
+            return new \ReflectionFunction($this->namespace . '\\' . $this->function);
         }
     }
 
@@ -462,7 +463,7 @@ class Frame
      */
     public function __toString(): string
     {
-        return $this->getSignature()."\n  ".Proxy::normalizePath($this->getCallingFile()).' : '.$this->getCallingLine();
+        return $this->getSignature() . "\n  " . Proxy::normalizePath($this->getCallingFile()) . ' : ' . $this->getCallingLine();
     }
 
 
