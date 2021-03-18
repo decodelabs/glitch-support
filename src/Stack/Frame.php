@@ -386,7 +386,7 @@ class Frame
         }
 
         if (
-            $this->function !== null &&
+            //$this->function !== null &&
             false !== strpos($this->function, '{closure}')
         ) {
             $output .= '{closure}';
