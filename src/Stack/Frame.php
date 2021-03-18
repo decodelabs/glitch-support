@@ -10,7 +10,11 @@ declare(strict_types=1);
 namespace DecodeLabs\Glitch\Stack;
 
 use DecodeLabs\Glitch\Proxy;
+
 use OutOfBoundsException;
+use ReflectionClass;
+use ReflectionFunction;
+use ReflectionFunctionAbstract;
 
 /**
  * Represents a single entry in a stack trace
@@ -413,15 +417,15 @@ class Frame
     /**
      * Get reflection for active frame function
      */
-    public function getReflection(): ?\ReflectionFunctionAbstract
+    public function getReflection(): ?ReflectionFunctionAbstract
     {
         if ($this->function === '{closure}') {
             return null;
         } elseif ($this->className !== null) {
-            $classRef = new \ReflectionClass($this->namespace . '\\' . $this->className);
+            $classRef = new ReflectionClass($this->namespace . '\\' . $this->className);
             return $classRef->getMethod($this->function);
         } else {
-            return new \ReflectionFunction($this->namespace . '\\' . $this->function);
+            return new ReflectionFunction($this->namespace . '\\' . $this->function);
         }
     }
 

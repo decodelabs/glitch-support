@@ -10,16 +10,18 @@ declare(strict_types=1);
 namespace DecodeLabs\Glitch\Stack;
 
 use ArrayAccess;
+use ArrayIterator;
 use BadMethodCallException;
 use Countable;
 
-use DecodeLabs\Exceptional\Exception;
 use DecodeLabs\Glitch\Dumpable;
 use DecodeLabs\Glitch\Proxy;
 
 use IteratorAggregate;
 use JsonSerializable;
 use OutOfBoundsException;
+use Throwable;
+use Traversable;
 use UnexpectedValueException;
 
 /**
@@ -37,24 +39,26 @@ class Trace implements
     /**
      * Extract trace from exception and build
      */
-    public static function fromException(\Throwable $e, int $rewind = 0): self
+    public static function fromException(Throwable $e, int $rewind = 0): self
     {
+        if ($e instanceof PreparedTraceException) {
+            return $e->getStackTrace();
+        }
+
         $output = self::fromArray($e->getTrace(), $rewind);
 
-        if (!$e instanceof Exception) {
-            array_unshift($output->frames, new Frame([
-                'fromFile' => $e->getFile(),
-                'fromLine' => $e->getLine(),
-                'function' => '__construct',
-                'class' => get_class($e),
-                'type' => '->',
-                'args' => [
-                    $e->getMessage(),
-                    $e->getCode(),
-                    $e->getPrevious()
-                ]
-            ]));
-        }
+        array_unshift($output->frames, new Frame([
+            'fromFile' => $e->getFile(),
+            'fromLine' => $e->getLine(),
+            'function' => '__construct',
+            'class' => get_class($e),
+            'type' => '->',
+            'args' => [
+                $e->getMessage(),
+                $e->getCode(),
+                $e->getPrevious()
+            ]
+        ]));
 
         return $output;
     }
@@ -189,9 +193,9 @@ class Trace implements
     /**
      * Create iterator
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
-        return new \ArrayIterator($this->frames);
+        return new ArrayIterator($this->frames);
     }
 
 

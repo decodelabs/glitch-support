@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace DecodeLabs\Glitch;
 
+use DecodeLabs\Glitch;
 use DecodeLabs\Glitch\Stack\Trace;
 
 use Exception;
@@ -40,7 +41,7 @@ final class Proxy
             return $path;
         }
 
-        return \DecodeLabs\Glitch::normalizePath($path);
+        return Glitch::normalizePath($path);
     }
 
 
@@ -54,7 +55,7 @@ final class Proxy
             return;
         }
 
-        \DecodeLabs\Glitch::logException($exception);
+        Glitch::logException($exception);
     }
 
 
@@ -68,7 +69,7 @@ final class Proxy
             return 'production';
         }
 
-        return \DecodeLabs\Glitch::getRunMode();
+        return Glitch::getRunMode();
     }
 
 
@@ -81,7 +82,7 @@ final class Proxy
             return false;
         }
 
-        return \DecodeLabs\Glitch::isDevelopment();
+        return Glitch::isDevelopment();
     }
 
     /**
@@ -93,7 +94,7 @@ final class Proxy
             return false;
         }
 
-        return \DecodeLabs\Glitch::isTesting();
+        return Glitch::isTesting();
     }
 
     /**
@@ -105,7 +106,7 @@ final class Proxy
             return true;
         }
 
-        return \DecodeLabs\Glitch::isProduction();
+        return Glitch::isProduction();
     }
 
 
