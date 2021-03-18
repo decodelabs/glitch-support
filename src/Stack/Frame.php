@@ -385,7 +385,10 @@ class Frame
             $output .= $this->getInvokeType();
         }
 
-        if (false !== strpos($this->function, '{closure}')) {
+        if (
+            $this->function !== null &&
+            false !== strpos($this->function, '{closure}')
+        ) {
             $output .= '{closure}';
         } else {
             $output .= $this->function;
