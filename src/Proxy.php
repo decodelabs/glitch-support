@@ -1,13 +1,15 @@
 <?php
+
 /**
- * This file is part of the Glitch Support package
+ * @package GlitchSupport
  * @license http://opensource.org/licenses/MIT
  */
+
 declare(strict_types=1);
+
 namespace DecodeLabs\Glitch;
 
-use DecodeLabs\Glitch\IncompleteException;
-use DecodeLabs\Glitch\Stack\Frame;
+use DecodeLabs\Glitch;
 use DecodeLabs\Glitch\Stack\Trace;
 
 use Exception;
@@ -21,7 +23,7 @@ final class Proxy
     /**
      * Protected constructor inhibits instantiation
      */
-    protected function __construct()
+    private function __construct()
     {
     }
 
@@ -39,7 +41,7 @@ final class Proxy
             return $path;
         }
 
-        return \DecodeLabs\Glitch::normalizePath($path);
+        return Glitch::normalizePath($path);
     }
 
 
@@ -53,7 +55,7 @@ final class Proxy
             return;
         }
 
-        \DecodeLabs\Glitch::logException($exception);
+        Glitch::logException($exception);
     }
 
 
@@ -67,7 +69,7 @@ final class Proxy
             return 'production';
         }
 
-        return \DecodeLabs\Glitch::getRunMode();
+        return Glitch::getRunMode();
     }
 
 
@@ -80,7 +82,7 @@ final class Proxy
             return false;
         }
 
-        return \DecodeLabs\Glitch::isDevelopment();
+        return Glitch::isDevelopment();
     }
 
     /**
@@ -92,7 +94,7 @@ final class Proxy
             return false;
         }
 
-        return \DecodeLabs\Glitch::isTesting();
+        return Glitch::isTesting();
     }
 
     /**
@@ -104,14 +106,14 @@ final class Proxy
             return true;
         }
 
-        return \DecodeLabs\Glitch::isProduction();
+        return Glitch::isProduction();
     }
 
 
     /**
      * Shortcut to incomplete context method
      */
-    public static function incomplete($data=null, int $rewind=0): void
+    public static function incomplete($data = null, int $rewind = 0): void
     {
         throw new IncompleteException(
             Trace::create($rewind),
@@ -123,7 +125,7 @@ final class Proxy
     /**
      * Create a new stack trace
      */
-    public static function stackTrace(int $rewind=0): Trace
+    public static function stackTrace(int $rewind = 0): Trace
     {
         return Trace::create($rewind);
     }

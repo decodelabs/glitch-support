@@ -1,9 +1,12 @@
 <?php
+
 /**
- * This file is part of the Glitch Support package
+ * @package GlitchSupport
  * @license http://opensource.org/licenses/MIT
  */
+
 declare(strict_types=1);
+
 namespace DecodeLabs\Glitch;
 
 use DecodeLabs\Glitch\Proxy as Glitch;
@@ -20,14 +23,14 @@ class IncompleteException extends Exception
     /**
      * Init with frame info
      */
-    public function __construct(Trace $trace, $data=null)
+    public function __construct(Trace $trace, $data = null)
     {
         if ($frame = $trace[1]) {
-            $message = $frame->getSignature().' has not been implemented yet';
+            $message = $frame->getSignature() . ' has not been implemented yet';
             $this->file = $frame->getFile();
             $this->line = $frame->getLine();
         } elseif ($frame = $trace[0]) {
-            $message = Glitch::normalizePath($frame->getFile()).' has not been implemented yet';
+            $message = Glitch::normalizePath($frame->getFile()) . ' has not been implemented yet';
             $this->file = $frame->getFile();
             $this->line = $frame->getLine();
         } else {

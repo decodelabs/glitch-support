@@ -1,3 +1,9 @@
+## v0.3.0 (2021-03-18)
+* Enabled PHP8 testing
+* Removed Exceptional dependency
+* Applied full PSR12 standards
+* Added PSR12 check to Travis build
+
 ## v0.2.2 (2020-10-04)
 * Update Veneer support in Stack Frame
 

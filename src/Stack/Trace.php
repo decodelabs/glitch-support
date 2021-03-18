@@ -1,25 +1,28 @@
 <?php
+
 /**
- * This file is part of the Glitch package
+ * @package GlitchSupport
  * @license http://opensource.org/licenses/MIT
  */
+
 declare(strict_types=1);
+
 namespace DecodeLabs\Glitch\Stack;
 
-use DecodeLabs\Glitch\Dumpable;
-use DecodeLabs\Glitch\Stack\Frame;
-use DecodeLabs\Glitch\Proxy;
-
-use DecodeLabs\Exceptional\Exception;
-
-use IteratorAggregate;
 use ArrayAccess;
-use JsonSerializable;
+use ArrayIterator;
+use BadMethodCallException;
 use Countable;
 
+use DecodeLabs\Glitch\Dumpable;
+use DecodeLabs\Glitch\Proxy;
+
+use IteratorAggregate;
+use JsonSerializable;
 use OutOfBoundsException;
+use Throwable;
+use Traversable;
 use UnexpectedValueException;
-use BadMethodCallException;
 
 /**
  * Represents a normalized stack trace
@@ -36,24 +39,26 @@ class Trace implements
     /**
      * Extract trace from exception and build
      */
-    public static function fromException(\Throwable $e, int $rewind=0): self
+    public static function fromException(Throwable $e, int $rewind = 0): self
     {
+        if ($e instanceof PreparedTraceException) {
+            return $e->getStackTrace();
+        }
+
         $output = self::fromArray($e->getTrace(), $rewind);
 
-        if (!$e instanceof Exception) {
-            array_unshift($output->frames, new Frame([
-                'fromFile' => $e->getFile(),
-                'fromLine' => $e->getLine(),
-                'function' => '__construct',
-                'class' => get_class($e),
-                'type' => '->',
-                'args' => [
-                    $e->getMessage(),
-                    $e->getCode(),
-                    $e->getPrevious()
-                ]
-            ]));
-        }
+        array_unshift($output->frames, new Frame([
+            'fromFile' => $e->getFile(),
+            'fromLine' => $e->getLine(),
+            'function' => '__construct',
+            'class' => get_class($e),
+            'type' => '->',
+            'args' => [
+                $e->getMessage(),
+                $e->getCode(),
+                $e->getPrevious()
+            ]
+        ]));
 
         return $output;
     }
@@ -61,7 +66,7 @@ class Trace implements
     /**
      * Generate a backtrace and build
      */
-    public static function create(int $rewind=0): self
+    public static function create(int $rewind = 0): self
     {
         return self::fromArray(debug_backtrace(), $rewind);
     }
@@ -69,7 +74,7 @@ class Trace implements
     /**
      * Take a trace array and convert to objects
      */
-    public static function fromArray(array $trace, int $rewind=0): self
+    public static function fromArray(array $trace, int $rewind = 0): self
     {
         $last = null;
 
@@ -188,9 +193,9 @@ class Trace implements
     /**
      * Create iterator
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
-        return new \ArrayIterator($this->frames);
+        return new ArrayIterator($this->frames);
     }
 
 
@@ -233,11 +238,11 @@ class Trace implements
         $pad = strlen((string)$count);
 
         foreach ($this->frames as $frame) {
-            $frameString = $frame->getSignature()."\n".
-                str_repeat(' ', $pad + 1).
-                Proxy::normalizePath($frame->getCallingFile()).' : '.$frame->getCallingLine();
+            $frameString = $frame->getSignature() . "\n" .
+                str_repeat(' ', $pad + 1) .
+                Proxy::normalizePath($frame->getCallingFile()) . ' : ' . $frame->getCallingLine();
 
-            $output .= str_pad((string)$count--, $pad, ' ', \STR_PAD_LEFT).': '.$frameString."\n";
+            $output .= str_pad((string)$count--, $pad, ' ', \STR_PAD_LEFT) . ': ' . $frameString . "\n";
         }
 
         return $output;
@@ -290,8 +295,8 @@ class Trace implements
         $count = count($frames);
 
         foreach ($frames as $i => $frame) {
-            $output[($count - $i).': '.$frame->getSignature(true)] = [
-                'file' => Proxy::normalizePath($frame->getCallingFile()).' : '.$frame->getCallingLine()
+            $output[($count - $i) . ': ' . $frame->getSignature(true)] = [
+                'file' => Proxy::normalizePath($frame->getCallingFile()) . ' : ' . $frame->getCallingLine()
             ];
         }
 
