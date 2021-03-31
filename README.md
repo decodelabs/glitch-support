@@ -10,3 +10,14 @@
 This repository contains shared support classes and interfaces for libraries wishing to support Glitch functionality.
 
 Please see [DecodeLabs Glitch](https://github.com/decodelabs/glitch) for more.
+
+
+### PHP version
+
+_Please note, the final v1 releases of all Decode Labs libraries will target **PHP8** or above._
+
+Current support for earlier versions of PHP will be phased out in the coming months.
+
+
+## Licensing
+Glitch is licensed under the MIT License. See [LICENSE](./LICENSE) for the full license text.
