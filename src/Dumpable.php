@@ -11,5 +11,8 @@ namespace DecodeLabs\Glitch;
 
 interface Dumpable
 {
+    /**
+     * @return iterable<string, mixed>
+     */
     public function glitchDump(): iterable;
 }

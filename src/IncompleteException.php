@@ -17,11 +17,20 @@ use Exception;
 
 class IncompleteException extends Exception
 {
+    /**
+     * @var Trace
+     */
     protected $stackTrace;
+
+    /**
+     * @var mixed
+     */
     protected $data;
 
     /**
      * Init with frame info
+     *
+     * @param mixed $data
      */
     public function __construct(Trace $trace, $data = null)
     {
@@ -52,6 +61,8 @@ class IncompleteException extends Exception
 
     /**
      * Get data
+     *
+     * @return mixed
      */
     public function getData()
     {
