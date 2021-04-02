@@ -1,3 +1,7 @@
+## v0.3.1 (2021-04-02)
+* Updated for max PHPStan conformance
+* Removed mb-string polyfill
+
 ## v0.3.0 (2021-03-18)
 * Enabled PHP8 testing
 * Removed Exceptional dependency
