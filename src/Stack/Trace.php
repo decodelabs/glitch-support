@@ -26,6 +26,9 @@ use UnexpectedValueException;
 
 /**
  * Represents a normalized stack trace
+ *
+ * @implements IteratorAggregate<int, Frame>
+ * @implements ArrayAccess<int, Frame>
  */
 class Trace implements
     IteratorAggregate,
@@ -34,6 +37,9 @@ class Trace implements
     Countable,
     Dumpable
 {
+    /**
+     * @var array<int, Frame>
+     */
     protected $frames = [];
 
     /**
@@ -73,6 +79,8 @@ class Trace implements
 
     /**
      * Take a trace array and convert to objects
+     *
+     * @param array<array> $trace
      */
     public static function fromArray(array $trace, int $rewind = 0): self
     {
@@ -115,6 +123,8 @@ class Trace implements
 
     /**
      * Check list of frames
+     *
+     * @param array<Frame> $frames
      */
     public function __construct(array $frames)
     {
@@ -133,6 +143,8 @@ class Trace implements
 
     /**
      * Get the frame list as an array
+     *
+     * @return array<Frame>
      */
     public function getFrames(): array
     {
@@ -201,6 +213,8 @@ class Trace implements
 
     /**
      * Export to generic array
+     *
+     * @return array<array>
      */
     public function toArray(): array
     {
@@ -252,7 +266,7 @@ class Trace implements
     /**
      * Set offset
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new BadMethodCallException('Stack traces cannot be changed after instantiation');
     }
@@ -268,7 +282,7 @@ class Trace implements
     /**
      * Has offset?
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->frames[$offset]);
     }
@@ -276,7 +290,7 @@ class Trace implements
     /**
      * Remove offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new BadMethodCallException('Stack traces cannot be changed after instantiation');
     }
@@ -287,6 +301,8 @@ class Trace implements
 
     /**
      * Debug info
+     *
+     * @return array<string, mixed>
      */
     public function __debugInfo(): array
     {

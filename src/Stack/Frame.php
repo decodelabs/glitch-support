@@ -11,6 +11,7 @@ namespace DecodeLabs\Glitch\Stack;
 
 use DecodeLabs\Glitch\Proxy;
 
+use JsonSerializable;
 use OutOfBoundsException;
 use ReflectionClass;
 use ReflectionFunction;
@@ -19,17 +20,52 @@ use ReflectionFunctionAbstract;
 /**
  * Represents a single entry in a stack trace
  */
-class Frame
+class Frame implements JsonSerializable
 {
+    /**
+     * @var string|null
+     */
     protected $function;
+
+    /**
+     * @var string|null
+     */
     protected $className;
+
+    /**
+     * @var string|null
+     */
     protected $namespace;
+
+    /**
+     * @var string|null
+     */
     protected $type;
+
+    /**
+     * @var array<mixed>
+     */
     protected $args = [];
 
+
+    /**
+     * @var string|null
+     */
     protected $callingFile;
+
+    /**
+     * @var int|null
+     */
     protected $callingLine;
+
+    /**
+     * @var string|null
+     */
     protected $originFile;
+
+    /**
+     * @var int|null
+     */
     protected $originLine;
 
 
@@ -63,6 +99,8 @@ class Frame
 
     /**
      * Build the frame object from a stack trace frame array
+     *
+     * @param array<string, mixed> $frame
      */
     public function __construct(array $frame)
     {
@@ -194,7 +232,10 @@ class Frame
             return null;
         }
 
-        if (defined($this->className . '::VENEER')) {
+        if (
+            $this->className !== null &&
+            defined($this->className . '::VENEER')
+        ) {
             return $this->className::VENEER;
         }
 
@@ -307,6 +348,8 @@ class Frame
 
     /**
      * Get args array
+     *
+     * @return array<mixed>
      */
     public function getArgs(): array
     {
@@ -421,8 +464,17 @@ class Frame
     {
         if ($this->function === '{closure}') {
             return null;
-        } elseif ($this->className !== null) {
-            $classRef = new ReflectionClass($this->namespace . '\\' . $this->className);
+        } elseif (
+            $this->className !== null &&
+            $this->function !== null
+        ) {
+            $className = $this->namespace . '\\' . $this->className;
+
+            if (!class_exists($className)) {
+                return null;
+            }
+
+            $classRef = new ReflectionClass($className);
             return $classRef->getMethod($this->function);
         } else {
             return new ReflectionFunction($this->namespace . '\\' . $this->function);
@@ -476,6 +528,8 @@ class Frame
 
     /**
      * Convert to a generic array
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
