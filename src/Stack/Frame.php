@@ -104,13 +104,51 @@ class Frame implements JsonSerializable
      */
     public function __construct(array $frame)
     {
-        $this->callingFile = $frame['fromFile'] ?? null;
-        $this->callingLine = $frame['fromLine'] ?? null;
-        $this->originFile = $frame['file'] ?? null;
-        $this->originLine = $frame['line'] ?? null;
-        $this->function = $frame['function'] ?? null;
+        // Calling file
+        if (
+            isset($frame['fromFile']) &&
+            is_string($frame['fromFile'])
+        ) {
+            $this->callingFile = $frame['fromFile'];
+        }
 
-        if (isset($frame['class'])) {
+        // Calling line
+        if (
+            isset($frame['fromLine']) &&
+            is_int($frame['fromLine'])
+        ) {
+            $this->callingLine = $frame['fromLine'];
+        }
+
+        // File
+        if (
+            isset($frame['file']) &&
+            is_string($frame['file'])
+        ) {
+            $this->originFile = $frame['file'];
+        }
+
+        // Line
+        if (
+            isset($frame['line']) &&
+            is_int($frame['line'])
+        ) {
+            $this->originLine = $frame['line'];
+        }
+
+        // Function
+        if (
+            isset($frame['function']) &&
+            is_string($frame['function'])
+        ) {
+            $this->function = $frame['function'];
+        }
+
+        // Class
+        if (
+            isset($frame['class']) &&
+            is_string($frame['class'])
+        ) {
             $parts = explode('\\', $frame['class']);
             $this->className = array_pop($parts);
         } elseif ($this->function !== null) {
@@ -118,10 +156,12 @@ class Frame implements JsonSerializable
             $this->function = array_pop($parts);
         }
 
+        // Namespace
         if (!empty($parts)) {
             $this->namespace = implode('\\', $parts);
         }
 
+        // Type
         if (isset($frame['type'])) {
             switch ($frame['type']) {
                 case '::':
@@ -138,6 +178,7 @@ class Frame implements JsonSerializable
             $this->type = 'globalFunction';
         }
 
+        // Args
         if (isset($frame['args'])) {
             $this->args = (array)$frame['args'];
         }
@@ -145,9 +186,12 @@ class Frame implements JsonSerializable
 
         // Glitch specific
         if (null !== $this->getVeneerProxy()) {
-            if (isset($this->args[0])) {
-                $this->function = array_shift($this->args);
-                $this->args = $this->args[0];
+            if (
+                isset($this->args[0]) &&
+                is_string($this->args[0])
+            ) {
+                $this->function = $this->args[0];
+                $this->args = (array)$this->args[1];
             }
         }
 
@@ -155,7 +199,9 @@ class Frame implements JsonSerializable
             $this->function === '__callStatic' ||
             $this->function === '__call'
         ) {
-            $this->function = array_shift($this->args);
+            /** @var string $func */
+            $func = array_shift($this->args);
+            $this->function = $func;
         }
     }
 
