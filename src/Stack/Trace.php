@@ -80,7 +80,7 @@ class Trace implements
     /**
      * Take a trace array and convert to objects
      *
-     * @param array<array> $trace
+     * @param array<array<mixed>> $trace
      */
     public static function fromArray(array $trace, int $rewind = 0): self
     {
@@ -214,7 +214,7 @@ class Trace implements
     /**
      * Export to generic array
      *
-     * @return array<array>
+     * @return array<array<mixed>>
      */
     public function toArray(): array
     {

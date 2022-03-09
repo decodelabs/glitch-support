@@ -36,12 +36,12 @@ class IncompleteException extends Exception
     {
         if ($frame = $trace[1]) {
             $message = $frame->getSignature() . ' has not been implemented yet';
-            $this->file = $frame->getFile();
-            $this->line = $frame->getLine();
+            $this->file = (string)$frame->getFile();
+            $this->line = (int)$frame->getLine();
         } elseif ($frame = $trace[0]) {
             $message = Glitch::normalizePath($frame->getFile()) . ' has not been implemented yet';
-            $this->file = $frame->getFile();
-            $this->line = $frame->getLine();
+            $this->file = (string)$frame->getFile();
+            $this->line = (int)$frame->getLine();
         } else {
             $message = 'Feature has not been implemented yet';
         }
