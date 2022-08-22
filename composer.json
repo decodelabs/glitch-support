@@ -29,6 +29,11 @@
             "dev-develop": "0.4.x-dev"
         }
     },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
     "scripts": {
         "analyze": "phpstan analyze --no-progress",
         "psr12": "ecs check --no-progress-bar",
