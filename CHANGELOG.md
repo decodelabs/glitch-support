@@ -1,5 +1,7 @@
+## v0.4.0 (2022-08-22)
 * Removed PHP7 compatibility
 * Updated ECS to v11
+* Updated PHPUnit to v9
 
 ## v0.3.2 (2022-03-09)
 * Transitioned from Travis to GHA
