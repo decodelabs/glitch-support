@@ -40,13 +40,15 @@ class Trace implements
     /**
      * @var array<int, Frame>
      */
-    protected $frames = [];
+    protected array $frames = [];
 
     /**
      * Extract trace from exception and build
      */
-    public static function fromException(Throwable $e, int $rewind = 0): self
-    {
+    public static function fromException(
+        Throwable $e,
+        int $rewind = 0
+    ): self {
         if ($e instanceof PreparedTraceException) {
             return $e->getStackTrace();
         }
