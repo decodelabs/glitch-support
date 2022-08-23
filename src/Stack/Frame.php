@@ -22,51 +22,20 @@ use ReflectionFunctionAbstract;
  */
 class Frame implements JsonSerializable
 {
-    /**
-     * @var string|null
-     */
-    protected $function;
-
-    /**
-     * @var string|null
-     */
-    protected $className;
-
-    /**
-     * @var string|null
-     */
-    protected $namespace;
-
-    /**
-     * @var string|null
-     */
-    protected $type;
+    protected ?string $function = null;
+    protected ?string $className = null;
+    protected ?string $namespace = null;
+    protected ?string $type = null;
 
     /**
      * @var array<mixed>
      */
-    protected $args = [];
+    protected array $args = [];
 
-
-    /**
-     * @var string|null
-     */
-    protected $callingFile;
-
-    /**
-     * @var int|null
-     */
-    protected $callingLine;
-
-    /**
-     * @var string|null
-     */
-    protected $originFile;
-
-    /**
-     * @var int|null
-     */
-    protected $originLine;
+    protected ?string $callingFile = null;
+    protected ?int $callingLine = null;
+    protected ?string $originFile = null;
+    protected ?int $originLine = null;
 
 
     /**
@@ -199,7 +168,7 @@ class Frame implements JsonSerializable
             $this->function === '__callStatic' ||
             $this->function === '__call'
         ) {
-            /** @var string $func */
+            /** @var string|null $func */
             $func = array_shift($this->args);
             $this->function = $func;
         }
@@ -344,8 +313,10 @@ class Frame implements JsonSerializable
     /**
      * Normalize a classname
      */
-    public static function normalizeClassName(string $class, bool $alias = true): string
-    {
+    public static function normalizeClassName(
+        string $class,
+        bool $alias = true
+    ): string {
         if (
             $alias &&
             false !== strpos($class, 'veneer/src/Veneer/Binding.php') &&
@@ -456,8 +427,10 @@ class Frame implements JsonSerializable
     /**
      * Generate a full frame signature
      */
-    public function getSignature(?bool $argString = false, bool $namespace = true): string
-    {
+    public function getSignature(
+        ?bool $argString = false,
+        bool $namespace = true
+    ): string {
         $output = '';
 
         if ($namespace && $this->namespace !== null) {

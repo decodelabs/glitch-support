@@ -12,7 +12,6 @@ namespace DecodeLabs\Glitch;
 use DecodeLabs\Glitch;
 use DecodeLabs\Glitch\Stack\Trace;
 
-use Exception;
 use Throwable;
 
 /**
@@ -112,11 +111,11 @@ final class Proxy
 
     /**
      * Shortcut to incomplete context method
-     *
-     * @param mixed $data
      */
-    public static function incomplete($data = null, int $rewind = 0): void
-    {
+    public static function incomplete(
+        mixed $data = null,
+        int $rewind = 0
+    ): void {
         throw new IncompleteException(
             Trace::create($rewind),
             $data

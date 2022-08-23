@@ -17,23 +17,16 @@ use Exception;
 
 class IncompleteException extends Exception
 {
-    /**
-     * @var Trace
-     */
-    protected $stackTrace;
-
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected Trace $stackTrace;
+    protected mixed $data;
 
     /**
      * Init with frame info
-     *
-     * @param mixed $data
      */
-    public function __construct(Trace $trace, $data = null)
-    {
+    public function __construct(
+        Trace $trace,
+        mixed $data = null
+    ) {
         if ($frame = $trace[1]) {
             $message = $frame->getSignature() . ' has not been implemented yet';
             $this->file = (string)$frame->getFile();
