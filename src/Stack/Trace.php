@@ -268,31 +268,39 @@ class Trace implements
     /**
      * Set offset
      */
-    public function offsetSet($offset, $value): void
-    {
+    public function offsetSet(
+        mixed $offset,
+        mixed $value
+    ): void {
         throw new BadMethodCallException('Stack traces cannot be changed after instantiation');
     }
 
     /**
      * Get by index
+     *
+     * @param int $offset
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): ?Frame
     {
         return $this->frames[$offset] ?? null;
     }
 
     /**
      * Has offset?
+     *
+     * @param int $offset
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->frames[$offset]);
     }
 
     /**
      * Remove offset
+     *
+     * @param int $offset
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         throw new BadMethodCallException('Stack traces cannot be changed after instantiation');
     }

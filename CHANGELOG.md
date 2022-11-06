@@ -1,3 +1,9 @@
+## v0.4.2 (2022-11-06)
+* Fixed ArrayAccess interfaces
+* Fixed PHP8.1 testing
+* Updated composer check script
+* Updated CI environment
+
 ## v0.4.1 (2022-08-23)
 * Added concrete types to all members
 
