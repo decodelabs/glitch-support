@@ -27,13 +27,16 @@ jobs:
   syntax_errors:
     name: "1️⃣ Syntax errors"
     runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        php-version:
+          - "8.0"
+          - "8.1"
     steps:
       - name: "Set up PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version:
-            - "8.0"
-            - "8.1"
+          php-version: "${{ matrix.php-version }}"
           extensions: "intl"
           ini-values: "post_max_size=256M"
 
