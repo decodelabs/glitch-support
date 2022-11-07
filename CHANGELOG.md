@@ -1,3 +1,6 @@
+## v0.4.3 (2022-11-07)
+* Fixed jsonSerialize interface
+
 ## v0.4.2 (2022-11-06)
 * Fixed ArrayAccess interfaces
 * Fixed PHP8.1 testing
