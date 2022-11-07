@@ -227,8 +227,10 @@ class Trace implements
 
     /**
      * Convert to json serializable state
+     *
+     * @return array<array<string, mixed>>
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return array_map(function ($frame) {
             return $frame->jsonSerialize();
