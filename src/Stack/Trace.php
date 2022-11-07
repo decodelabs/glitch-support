@@ -227,6 +227,8 @@ class Trace implements
 
     /**
      * Convert to json serializable state
+     *
+     * @return array<array<string, mixed>>
      */
     public function jsonSerialize(): array
     {

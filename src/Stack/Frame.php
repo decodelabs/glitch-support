@@ -565,6 +565,8 @@ class Frame implements JsonSerializable
 
     /**
      * Convert to json serializable state
+     *
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {
