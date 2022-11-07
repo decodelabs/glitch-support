@@ -566,7 +566,7 @@ class Frame implements JsonSerializable
     /**
      * Convert to json serializable state
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'file' => Proxy::normalizePath($this->getFile()),
