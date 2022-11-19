@@ -1,3 +1,5 @@
+* Migrated to use effigy in CI workflow
+
 ## v0.4.3 (2022-11-07)
 * Fixed jsonSerialize interface
 
