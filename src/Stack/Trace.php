@@ -74,8 +74,9 @@ class Trace implements
     /**
      * Generate a backtrace and build
      */
-    public static function create(int $rewind = 0): self
-    {
+    public static function create(
+        int $rewind = 0
+    ): self {
         return self::fromArray(debug_backtrace(), $rewind);
     }
 
@@ -84,8 +85,10 @@ class Trace implements
      *
      * @param array<array<mixed>> $trace
      */
-    public static function fromArray(array $trace, int $rewind = 0): self
-    {
+    public static function fromArray(
+        array $trace,
+        int $rewind = 0
+    ): self {
         $last = null;
 
         if ($rewind) {
@@ -128,8 +131,9 @@ class Trace implements
      *
      * @param array<Frame> $frames
      */
-    public function __construct(array $frames)
-    {
+    public function __construct(
+        array $frames
+    ) {
         foreach ($frames as $frame) {
             if (!$frame instanceof Frame) {
                 throw new UnexpectedValueException(
@@ -164,8 +168,9 @@ class Trace implements
     /**
      * Get frame by offset
      */
-    public function getFrame(int $offset): ?Frame
-    {
+    public function getFrame(
+        int $offset
+    ): ?Frame {
         return $this->frames[$offset] ?? null;
     }
 
@@ -282,8 +287,9 @@ class Trace implements
      *
      * @param int $offset
      */
-    public function offsetGet(mixed $offset): ?Frame
-    {
+    public function offsetGet(
+        mixed $offset
+    ): ?Frame {
         return $this->frames[$offset] ?? null;
     }
 
@@ -292,8 +298,9 @@ class Trace implements
      *
      * @param int $offset
      */
-    public function offsetExists(mixed $offset): bool
-    {
+    public function offsetExists(
+        mixed $offset
+    ): bool {
         return isset($this->frames[$offset]);
     }
 
@@ -302,8 +309,9 @@ class Trace implements
      *
      * @param int $offset
      */
-    public function offsetUnset(mixed $offset): void
-    {
+    public function offsetUnset(
+        mixed $offset
+    ): void {
         throw new BadMethodCallException('Stack traces cannot be changed after instantiation');
     }
 

@@ -30,8 +30,9 @@ final class Proxy
     /**
      * Lookup and replace path prefix
      */
-    public static function normalizePath(?string $path): ?string
-    {
+    public static function normalizePath(
+        ?string $path
+    ): ?string {
         if ($path === null) {
             return null;
         }
@@ -48,8 +49,9 @@ final class Proxy
     /**
      * Log exception
      */
-    public static function logException(Throwable $exception): void
-    {
+    public static function logException(
+        Throwable $exception
+    ): void {
         if (!class_exists('DecodeLabs\\Glitch')) {
             return;
         }
@@ -126,8 +128,9 @@ final class Proxy
     /**
      * Create a new stack trace
      */
-    public static function stackTrace(int $rewind = 0): Trace
-    {
+    public static function stackTrace(
+        int $rewind = 0
+    ): Trace {
         return Trace::create($rewind);
     }
 }
