@@ -1,3 +1,5 @@
+* Added Timer class
+
 ## v0.4.4 (2023-09-26)
 * Migrated to use effigy in CI workflow
 
