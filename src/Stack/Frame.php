@@ -42,8 +42,9 @@ class Frame implements JsonSerializable
      * Generate a new trace and pull out a single frame
      * depending on the rewind range
      */
-    public static function create(int $rewind = 0): Frame
-    {
+    public static function create(
+        int $rewind = 0
+    ): Frame {
         $data = debug_backtrace();
 
         if ($rewind >= count($data) - 1) {
@@ -71,8 +72,9 @@ class Frame implements JsonSerializable
      *
      * @param array<string, mixed> $frame
      */
-    public function __construct(array $frame)
-    {
+    public function __construct(
+        array $frame
+    ) {
         // Calling file
         if (
             isset($frame['fromFile']) &&
