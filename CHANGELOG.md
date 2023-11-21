@@ -1,3 +1,4 @@
+* Added never return type to incomplete()
 * Made PHP8.1 minimum version
 
 ## v0.4.5 (2023-11-09)
