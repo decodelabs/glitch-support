@@ -117,7 +117,7 @@ final class Proxy
     public static function incomplete(
         mixed $data = null,
         int $rewind = 0
-    ): void {
+    ): never {
         throw new IncompleteException(
             Trace::create($rewind),
             $data
