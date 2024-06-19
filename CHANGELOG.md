@@ -1,3 +1,4 @@
+* Added SensitiveProperty attribute
 * Added never return type to incomplete()
 * Made PHP8.1 minimum version
 
