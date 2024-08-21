@@ -1,3 +1,4 @@
+## v0.4.6 (2024-08-21)
 * Improved Veneer support in Stack Frame
 
 ## v0.4.6 (2024-06-19)
