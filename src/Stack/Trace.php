@@ -13,10 +13,8 @@ use ArrayAccess;
 use ArrayIterator;
 use BadMethodCallException;
 use Countable;
-
 use DecodeLabs\Glitch\Dumpable;
 use DecodeLabs\Glitch\Proxy;
-
 use IteratorAggregate;
 use JsonSerializable;
 use OutOfBoundsException;
@@ -105,7 +103,7 @@ class Trace implements
         }
 
         if (!$last) {
-            $last = array_shift($trace);
+            $last = $trace[0] ?? null;
         }
 
         $last['fromFile'] = $last['file'] ?? null;
@@ -113,6 +111,17 @@ class Trace implements
         $output = [];
 
         foreach ($trace as $frame) {
+            // Skip Venetian proxy frames
+            /** @var string $file */
+            $file = $frame['file'] ?? '';
+
+            if (str_ends_with(
+                $file,
+                'Veneer/ProxyTrait.php'
+            )) {
+                continue;
+            }
+
             $frame['fromFile'] = $frame['file'] ?? null;
             $frame['fromLine'] = $frame['line'] ?? null;
             $frame['file'] = $last['fromFile'];

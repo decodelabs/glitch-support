@@ -154,18 +154,6 @@ class Frame implements JsonSerializable
             $this->args = (array)$frame['args'];
         }
 
-
-        // Glitch specific
-        if (null !== $this->getVeneerProxy()) {
-            if (
-                isset($this->args[0]) &&
-                is_string($this->args[0])
-            ) {
-                $this->function = $this->args[0];
-                $this->args = (array)$this->args[1];
-            }
-        }
-
         if (
             $this->function === '__callStatic' ||
             $this->function === '__call'
@@ -243,7 +231,10 @@ class Frame implements JsonSerializable
         $isProxy =
             //$this->function === '__callStatic' &&
             $this->className !== null &&
-            false !== strpos($this->className, 'veneer/src/Veneer/Binding.php');
+            (
+                false !== strpos($this->className, 'veneer/src/Veneer/Binding.php') ||
+                str_starts_with($this->namespace ?? '', 'DecodeLabs\\Veneer\\Binding\\')
+            );
 
         if (!$isProxy) {
             return null;
@@ -251,9 +242,10 @@ class Frame implements JsonSerializable
 
         if (
             $this->className !== null &&
-            defined($this->className . '::VENEER')
+            defined(($class = $this->getClass()) . '::Veneer')
         ) {
-            return $this->className::VENEER;
+            /** @phpstan-ignore-next-line */
+            return $class::Veneer;
         }
 
         return null;
@@ -321,10 +313,13 @@ class Frame implements JsonSerializable
     ): string {
         if (
             $alias &&
-            false !== strpos($class, 'veneer/src/Veneer/Binding.php') &&
-            defined($class . '::VENEER')
+            (
+                false !== strpos($class, 'veneer/src/Veneer/Binding.php') ||
+                str_starts_with($class, 'DecodeLabs\\Veneer\\Binding\\')
+            ) &&
+            defined($class . '::Veneer')
         ) {
-            return '~' . $class::VENEER;
+            return '~' . $class::Veneer;
         }
 
         $name = [];
@@ -347,8 +342,7 @@ class Frame implements JsonSerializable
             } elseif (preg_match('/^eval\(\)\'d/', $part)) {
                 $name = ['eval[ ' . implode(' : ', $name) . ' ]'];
             } else {
-                $el = explode('\\', $part);
-                $name[] = array_pop($el);
+                $name[] = $part;
             }
         }
 
