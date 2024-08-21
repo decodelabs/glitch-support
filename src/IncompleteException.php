@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace DecodeLabs\Glitch;
 
 use DecodeLabs\Glitch\Proxy as Glitch;
-use DecodeLabs\Glitch\Stack\Frame;
 use DecodeLabs\Glitch\Stack\Trace;
 
 use Exception;
@@ -54,10 +53,8 @@ class IncompleteException extends Exception
 
     /**
      * Get data
-     *
-     * @return mixed
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
