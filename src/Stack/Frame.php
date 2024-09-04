@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace DecodeLabs\Glitch\Stack;
 
 use DecodeLabs\Glitch\Proxy;
-
 use JsonSerializable;
 use OutOfBoundsException;
 use ReflectionClass;
@@ -330,7 +329,7 @@ class Frame implements JsonSerializable
             $part = trim(array_shift($parts));
 
             if (preg_match('/^class@anonymous(.+)(\(([0-9]+)\))/', $part, $matches)) {
-                $name[] = Proxy::normalizePath(trim($matches[1])) . ' : ' . ($matches[3] ?? null);
+                $name[] = Proxy::normalizePath(trim($matches[1])) . ' : ' . ($matches[3]);
             } elseif (preg_match('/^class@anonymous(.+)(0x[0-9a-f]+)/', $part, $matches)) {
                 $partName = Proxy::normalizePath(trim($matches[1]));
 
