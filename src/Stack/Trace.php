@@ -20,7 +20,6 @@ use JsonSerializable;
 use OutOfBoundsException;
 use Throwable;
 use Traversable;
-use UnexpectedValueException;
 
 /**
  * Represents a normalized stack trace
@@ -36,9 +35,17 @@ class Trace implements
     Dumpable
 {
     /**
-     * @var array<int, Frame>
+     * @var array<int,Frame>
      */
-    protected array $frames = [];
+    public protected(set) array $frames = [];
+
+    public ?string $file {
+        get => $this->getFirstFrame()?->file;
+    }
+
+    public ?int $line {
+        get => $this->getFirstFrame()?->line;
+    }
 
     /**
      * Extract trace from exception and build
@@ -48,7 +55,7 @@ class Trace implements
         int $rewind = 0
     ): self {
         if ($e instanceof PreparedTraceException) {
-            return $e->getStackTrace();
+            return $e->stackTrace;
         }
 
         $output = self::fromArray($e->getTrace(), $rewind);
@@ -81,7 +88,7 @@ class Trace implements
     /**
      * Take a trace array and convert to objects
      *
-     * @param array<array<mixed>> $trace
+     * @param array<array<string,mixed>> $trace
      */
     public static function fromArray(
         array $trace,
@@ -131,40 +138,22 @@ class Trace implements
             $last = $frame;
         }
 
-        return new self($output);
+        return new self(...$output);
     }
 
 
     /**
      * Check list of frames
-     *
-     * @param array<Frame> $frames
      */
     public function __construct(
-        array $frames
+        Frame ...$frames
     ) {
         foreach ($frames as $frame) {
-            if (!$frame instanceof Frame) {
-                throw new UnexpectedValueException(
-                    'Trace frame is not an instance of DecodeLabs\\Glitch\\Stack\\Frame'
-                );
-            }
-
             $this->frames[] = $frame;
         }
     }
 
 
-
-    /**
-     * Get the frame list as an array
-     *
-     * @return array<Frame>
-     */
-    public function getFrames(): array
-    {
-        return $this->frames;
-    }
 
     /**
      * Get first frame
@@ -189,31 +178,6 @@ class Trace implements
     public function shift(): ?Frame
     {
         return array_shift($this->frames);
-    }
-
-
-    /**
-     * Get file from first frame
-     */
-    public function getFile(): ?string
-    {
-        if (!isset($this->frames[0])) {
-            return null;
-        }
-
-        return $this->frames[0]->getFile();
-    }
-
-    /**
-     * Get line from first frame
-     */
-    public function getLine(): ?int
-    {
-        if (!isset($this->frames[0])) {
-            return null;
-        }
-
-        return $this->frames[0]->getLine();
     }
 
 
@@ -270,9 +234,9 @@ class Trace implements
         $pad = strlen((string)$count);
 
         foreach ($this->frames as $frame) {
-            $frameString = $frame->getSignature() . "\n" .
+            $frameString = $frame->buildSignature() . "\n" .
                 str_repeat(' ', $pad + 1) .
-                Proxy::normalizePath($frame->getCallingFile()) . ' : ' . $frame->getCallingLine();
+                Proxy::normalizePath($frame->callingFile) . ' : ' . $frame->callingLine;
 
             $output .= str_pad((string)$count--, $pad, ' ', \STR_PAD_LEFT) . ': ' . $frameString . "\n";
         }
@@ -336,12 +300,11 @@ class Trace implements
     public function __debugInfo(): array
     {
         $output = [];
-        $frames = $this->getFrames();
-        $count = count($frames);
+        $count = count($this->frames);
 
-        foreach ($frames as $i => $frame) {
-            $output[($count - $i) . ': ' . $frame->getSignature(true)] = [
-                'file' => Proxy::normalizePath($frame->getCallingFile()) . ' : ' . $frame->getCallingLine()
+        foreach ($this->frames as $i => $frame) {
+            $output[($count - $i) . ': ' . $frame->buildSignature(true)] = [
+                'file' => Proxy::normalizePath($frame->callingFile) . ' : ' . $frame->callingLine
             ];
         }
 

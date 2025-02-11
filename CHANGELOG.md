@@ -1,4 +1,7 @@
+## v0.5.0 (2025-02-11)
+* Converted getters to properties
 * Added PHP8.4 to CI workflow
+* Made PHP8.4 minimum version
 
 ## v0.4.7 (2024-08-21)
 * Improved Veneer support in Stack Frame

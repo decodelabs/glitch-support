@@ -11,6 +11,6 @@ namespace DecodeLabs\Glitch\Stack;
 
 interface PreparedTraceException
 {
-    public function getStackFrame(): Frame;
-    public function getStackTrace(): Trace;
+    public Trace $stackTrace { get; }
+    public ?Frame $stackFrame { get; }
 }

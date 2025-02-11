@@ -21,20 +21,76 @@ use ReflectionFunctionAbstract;
  */
 class Frame implements JsonSerializable
 {
-    protected ?string $function = null;
-    protected ?string $className = null;
-    protected ?string $namespace = null;
-    protected ?string $type = null;
+    public protected(set) ?string $function = null;
+    public protected(set) ?string $className = null;
+    public protected(set) ?string $namespace = null;
+
+    public ?string $class {
+        get {
+            if ($this->className === null) {
+                return null;
+            }
+
+            $output = $this->namespace !== null ?
+                $this->namespace . '\\' : '';
+
+            $output .= $this->className;
+            return $output;
+        }
+    }
+
+    public protected(set) ?string $type = null;
+
+    public ?string $invokeType {
+        get => match ($this->type) {
+            'staticMethod' => '::',
+            'objectMethod' => '->',
+            default => null
+        };
+    }
 
     /**
-     * @var array<mixed>
+     * @var array<string|int,mixed>
      */
-    protected array $args = [];
+    public protected(set) array $arguments = [];
 
-    protected ?string $callingFile = null;
-    protected ?int $callingLine = null;
-    protected ?string $originFile = null;
-    protected ?int $originLine = null;
+    public string $signature {
+        get => $this->buildSignature();
+    }
+
+    public protected(set) ?string $callingFile = null;
+    public protected(set) ?int $callingLine = null;
+    public protected(set) ?string $file = null;
+    public protected(set) ?int $line = null;
+
+    public ?ReflectionFunctionAbstract $reflection {
+        get {
+            if ($this->function === '{closure}') {
+                return null;
+            }
+
+            if (
+                $this->className !== null &&
+                $this->function !== null
+            ) {
+                $className = $this->namespace . '\\' . $this->className;
+
+                if (!class_exists($className)) {
+                    return null;
+                }
+
+                $classRef = new ReflectionClass($className);
+
+                if(!$classRef->hasMethod($this->function)) {
+                    return null;
+                }
+
+                return $classRef->getMethod($this->function);
+            }
+
+            return new ReflectionFunction($this->namespace . '\\' . $this->function);
+        }
+    }
 
 
     /**
@@ -47,7 +103,7 @@ class Frame implements JsonSerializable
         $data = debug_backtrace();
 
         if ($rewind >= count($data) - 1) {
-            throw new OutOfBoundsException('Stack rewind of stack frame range');
+            throw new OutOfBoundsException('Stack rewind out of stack frame range');
         }
 
         if ($rewind) {
@@ -69,7 +125,7 @@ class Frame implements JsonSerializable
     /**
      * Build the frame object from a stack trace frame array
      *
-     * @param array<string, mixed> $frame
+     * @param array<string,mixed> $frame
      */
     public function __construct(
         array $frame
@@ -95,7 +151,7 @@ class Frame implements JsonSerializable
             isset($frame['file']) &&
             is_string($frame['file'])
         ) {
-            $this->originFile = $frame['file'];
+            $this->file = $frame['file'];
         }
 
         // Line
@@ -103,7 +159,7 @@ class Frame implements JsonSerializable
             isset($frame['line']) &&
             is_int($frame['line'])
         ) {
-            $this->originLine = $frame['line'];
+            $this->line = $frame['line'];
         }
 
         // Function
@@ -150,7 +206,7 @@ class Frame implements JsonSerializable
 
         // Args
         if (isset($frame['args'])) {
-            $this->args = (array)$frame['args'];
+            $this->arguments = (array)$frame['args'];
         }
 
         if (
@@ -158,36 +214,11 @@ class Frame implements JsonSerializable
             $this->function === '__call'
         ) {
             /** @var string|null $func */
-            $func = array_shift($this->args);
+            $func = array_shift($this->arguments);
             $this->function = $func;
         }
     }
 
-
-
-    /**
-     * Get detected frame type
-     */
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    /**
-     * Get type method invoke type
-     */
-    public function getInvokeType(): ?string
-    {
-        switch ($this->type) {
-            case 'staticMethod':
-                return '::';
-
-            case 'objectMethod':
-                return '->';
-        }
-
-        return null;
-    }
 
     /**
      * Is type static method?
@@ -223,76 +254,11 @@ class Frame implements JsonSerializable
 
 
     /**
-     * Is in proxy ?
-     */
-    public function getVeneerProxy(): ?string
-    {
-        $isProxy =
-            //$this->function === '__callStatic' &&
-            $this->className !== null &&
-            (
-                false !== strpos($this->className, 'veneer/src/Veneer/Binding.php') ||
-                str_starts_with($this->namespace ?? '', 'DecodeLabs\\Veneer\\Binding\\')
-            );
-
-        if (!$isProxy) {
-            return null;
-        }
-
-        if (
-            $this->className !== null &&
-            defined(($class = $this->getClass()) . '::Veneer')
-        ) {
-            /** @phpstan-ignore-next-line */
-            return $class::Veneer;
-        }
-
-        return null;
-    }
-
-
-
-
-    /**
-     * Get frame namespace if applicable
-     */
-    public function getNamespace(): ?string
-    {
-        return $this->namespace;
-    }
-
-    /**
      * Is there a namespace?
      */
     public function hasNamespace(): bool
     {
         return $this->namespace !== null;
-    }
-
-
-
-    /**
-     * Get containing class (qualified) if applicable
-     */
-    public function getClass(): ?string
-    {
-        if ($this->className === null) {
-            return null;
-        }
-
-        $output = $this->namespace !== null ?
-            $this->namespace . '\\' : '';
-
-        $output .= $this->className;
-        return $output;
-    }
-
-    /**
-     * Get containing class name
-     */
-    public function getClassName(): ?string
-    {
-        return $this->className;
     }
 
     /**
@@ -316,7 +282,8 @@ class Frame implements JsonSerializable
                 false !== strpos($class, 'veneer/src/Veneer/Binding.php') ||
                 str_starts_with($class, 'DecodeLabs\\Veneer\\Binding\\')
             ) &&
-            defined($class . '::Veneer')
+            defined($class . '::Veneer') &&
+            is_string($class::Veneer)
         ) {
             return '~' . $class::Veneer;
         }
@@ -349,31 +316,12 @@ class Frame implements JsonSerializable
     }
 
 
-
-    /**
-     * Get function name
-     */
-    public function getFunctionName(): ?string
-    {
-        return $this->function;
-    }
-
-    /**
-     * Get args array
-     *
-     * @return array<mixed>
-     */
-    public function getArgs(): array
-    {
-        return $this->args;
-    }
-
     /**
      * Are there args?
      */
     public function hasArgs(): bool
     {
-        return !empty($this->args);
+        return !empty($this->arguments);
     }
 
     /**
@@ -381,21 +329,17 @@ class Frame implements JsonSerializable
      */
     public function countArgs(): int
     {
-        return count($this->args);
+        return count($this->arguments);
     }
 
     /**
      * Generate a string representation of args
      */
-    public function getArgString(): string
+    protected function buildArgumentString(): string
     {
         $output = [];
 
-        if (!is_array($this->args)) {
-            $this->args = [$this->args];
-        }
-
-        foreach ($this->args as $arg) {
+        foreach ($this->arguments as $arg) {
             if (is_string($arg)) {
                 if (strlen($arg) > 16) {
                     $arg = substr($arg, 0, 16) . '...';
@@ -422,7 +366,7 @@ class Frame implements JsonSerializable
     /**
      * Generate a full frame signature
      */
-    public function getSignature(
+    public function buildSignature(
         ?bool $argString = false,
         bool $namespace = true
     ): string {
@@ -443,7 +387,7 @@ class Frame implements JsonSerializable
         }
 
         if ($this->type) {
-            $output .= $this->getInvokeType();
+            $output .= $this->invokeType;
         }
 
         if (
@@ -456,12 +400,12 @@ class Frame implements JsonSerializable
         }
 
         if ($argString) {
-            $output .= $this->getArgString();
+            $output .= $this->buildArgumentString();
         } elseif ($argString !== null) {
             $output .= '(';
 
-            if (!empty($this->args)) {
-                $output .= count($this->args);
+            if (!empty($this->arguments)) {
+                $output .= count($this->arguments);
             }
 
             $output .= ')';
@@ -472,71 +416,13 @@ class Frame implements JsonSerializable
 
 
     /**
-     * Get reflection for active frame function
-     */
-    public function getReflection(): ?ReflectionFunctionAbstract
-    {
-        if ($this->function === '{closure}') {
-            return null;
-        } elseif (
-            $this->className !== null &&
-            $this->function !== null
-        ) {
-            $className = $this->namespace . '\\' . $this->className;
-
-            if (!class_exists($className)) {
-                return null;
-            }
-
-            $classRef = new ReflectionClass($className);
-            return $classRef->getMethod($this->function);
-        } else {
-            return new ReflectionFunction($this->namespace . '\\' . $this->function);
-        }
-    }
-
-
-
-
-    /**
-     * Get origin file
-     */
-    public function getFile(): ?string
-    {
-        return $this->originFile;
-    }
-
-    /**
-     * Get origin line
-     */
-    public function getLine(): ?int
-    {
-        return $this->originLine;
-    }
-
-    /**
-     * Get calling file
-     */
-    public function getCallingFile(): ?string
-    {
-        return $this->callingFile;
-    }
-
-    /**
-     * Get calling line
-     */
-    public function getCallingLine(): ?int
-    {
-        return $this->callingLine;
-    }
-
-
-    /**
      * Convert to string
      */
     public function __toString(): string
     {
-        return $this->getSignature() . "\n  " . Proxy::normalizePath($this->getCallingFile()) . ' : ' . $this->getCallingLine();
+        return
+            $this->buildSignature() . "\n  " .
+            Proxy::normalizePath($this->callingFile) . ' : ' . $this->callingLine;
     }
 
 
@@ -548,13 +434,13 @@ class Frame implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'file' => Proxy::normalizePath($this->getFile()),
-            'line' => $this->getLine(),
+            'file' => Proxy::normalizePath($this->file),
+            'line' => $this->line,
             'function' => $this->function,
             'class' => $this->className,
             'namespace' => $this->namespace,
             'type' => $this->type,
-            'args' => $this->args
+            'args' => $this->arguments
         ];
     }
 
@@ -566,9 +452,9 @@ class Frame implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'file' => Proxy::normalizePath($this->getFile()),
-            'line' => $this->getLine(),
-            'signature' => $this->getSignature()
+            'file' => Proxy::normalizePath($this->file),
+            'line' => $this->line,
+            'signature' => $this->buildSignature()
         ];
     }
 }
