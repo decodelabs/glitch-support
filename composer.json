@@ -26,6 +26,11 @@
         "branch-alias": {
             "dev-develop": "0.4.x-dev"
         },
+        "effigy": {
+            "exports": [
+                "phpstan-extension.neon"
+            ]
+        },
         "phpstan": {
             "includes": [
                 "phpstan-extension.neon"
