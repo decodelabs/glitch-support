@@ -1,3 +1,6 @@
+## v0.5.1 (2025-02-11)
+* Fixed minimum PHP version in composer.json
+
 ## v0.5.0 (2025-02-11)
 * Converted getters to properties
 * Added PHP8.4 to CI workflow
