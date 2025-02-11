@@ -1,0 +1,15 @@
+parameters:
+    earlyTerminatingFunctionCalls:
+        - dd
+        - dump
+
+    earlyTerminatingMethodCalls:
+        DecodeLabs\Glitch:
+            - dumpDie
+            - dumpValues
+            - dumpException
+            - incomplete
+
+        DecodeLabs\Glitch\Proxy:
+            - incomplete
+

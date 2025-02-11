@@ -41,6 +41,7 @@ final class Proxy
             return $path;
         }
 
+        // @phpstan-ignore-next-line
         return Glitch::normalizePath($path);
     }
 
@@ -70,6 +71,7 @@ final class Proxy
             return 'production';
         }
 
+        // @phpstan-ignore-next-line
         return Glitch::getRunMode();
     }
 
@@ -83,6 +85,7 @@ final class Proxy
             return false;
         }
 
+        // @phpstan-ignore-next-line
         return Glitch::isDevelopment();
     }
 
@@ -95,6 +98,7 @@ final class Proxy
             return false;
         }
 
+        // @phpstan-ignore-next-line
         return Glitch::isTesting();
     }
 
@@ -107,6 +111,7 @@ final class Proxy
             return true;
         }
 
+        // @phpstan-ignore-next-line
         return Glitch::isProduction();
     }
 

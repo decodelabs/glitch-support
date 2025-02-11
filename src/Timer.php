@@ -11,8 +11,12 @@ namespace DecodeLabs\Glitch;
 
 class Timer implements Dumpable
 {
-    protected float $start;
-    protected ?float $stop = null;
+    public private(set) float $start;
+    public private(set) ?float $end = null;
+
+    public float $time {
+        get => ($this->end ?? microtime(true)) - $this->start;
+    }
 
     /**
      * Init with start time
@@ -27,45 +31,28 @@ class Timer implements Dumpable
         $this->start = $start;
     }
 
-    /**
-     * Get start time
-     */
-    public function getStart(): float
-    {
-        return $this->start;
+
+    public function isRunning(): bool {
+        return $this->end === null;
     }
 
+
     /**
-     * Set stop time
+     * Set end time
      *
      * @return $this
      */
     public function stop(
-        ?float $stop = null
+        ?float $end = null
     ): static {
-        if ($stop === null) {
-            $stop = microtime(true);
+        if ($end === null) {
+            $end = microtime(true);
         }
 
-        $this->stop = $stop;
+        $this->end = $end;
         return $this;
     }
 
-    /**
-     * Get stop
-     */
-    public function getStop(): ?float
-    {
-        return $this->stop;
-    }
-
-    /**
-     * Get elapsed time
-     */
-    public function getTime(): float
-    {
-        return ($this->stop ?? microtime(true)) - $this->start;
-    }
 
     /**
      * Dump for glitch
@@ -73,7 +60,7 @@ class Timer implements Dumpable
     public function glitchDump(): iterable
     {
         yield 'text' => number_format(
-            $this->getTime() * 1000,
+            $this->time * 1000,
             2
         ) . ' ms';
     }
