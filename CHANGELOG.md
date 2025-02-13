@@ -1,3 +1,5 @@
+* Tidied boolean logic
+
 ## v0.5.1 (2025-02-11)
 * Fixed minimum PHP version in composer.json
 

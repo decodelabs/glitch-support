@@ -372,7 +372,10 @@ class Frame implements JsonSerializable
     ): string {
         $output = '';
 
-        if ($namespace && $this->namespace !== null) {
+        if (
+            $namespace &&
+            $this->namespace !== null
+        ) {
             $output = $this->namespace . '\\';
         }
 
